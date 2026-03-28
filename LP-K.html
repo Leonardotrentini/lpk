@@ -11,28 +11,21 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://fast.wistia.com">
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Meta Pixel Code -->
+    <!-- Fontes carregam de forma NÃO-BLOQUEANTE: página renderiza imediatamente com fontes do sistema -->
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Montserrat:wght@400;500;600;700&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet"></noscript>
+    <!-- Meta Pixel Code — fila criada imediatamente, script carrega após render -->
     <script>
-    !function(f,b,e,v,n,t,s)
-    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-    n.queue=[];t=b.createElement(e);t.async=!0;
-    t.src=v;s=b.getElementsByTagName(e)[0];
-    s.parentNode.insertBefore(t,s)}(window, document,'script',
-    'https://connect.facebook.net/en_US/fbevents.js');
-    fbq('init', '815331501622550');
-    fbq('track', 'PageView');
+    window._fbq_queue=[];
+    window.fbq=function(){window._fbq_queue.push(arguments)};
+    window.fbq('init','815331501622550');
+    window.fbq('track','PageView');
     </script>
     <noscript><img height="1" width="1" style="display:none"
     src="https://www.facebook.com/tr?id=815331501622550&ev=PageView&noscript=1"
     /></noscript>
     <!-- End Meta Pixel Code -->
 
-    <!-- Wistia Scripts -->
-    <script src="https://fast.wistia.com/player.js" async></script>
-    <script src="https://fast.wistia.com/embed/u17jv5n507.js" async type="module"></script>
     <style>
         :root {
             /* Fundos */
@@ -62,9 +55,9 @@
             --glow-gold: 0 0 30px rgba(255, 215, 0, 0.3);
             --glow-purple: 0 0 30px rgba(147, 51, 234, 0.3);
             
-            /* Fontes */
-            --font-display: 'Cormorant Garamond', serif;
-            --font-body: 'Montserrat', sans-serif;
+            /* Fontes — fallback system fonts para render imediato */
+            --font-display: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+            --font-body: 'Montserrat', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
         }
         
         * {
@@ -1770,6 +1763,30 @@
             const isActive = item.classList.contains('active');
             document.querySelectorAll('.faq-item.active').forEach(i => i.classList.remove('active'));
             if (!isActive) item.classList.add('active');
+        });
+
+        // Carrega o Meta Pixel e o Wistia após o primeiro render (não bloqueia FCP)
+        window.addEventListener('load', function() {
+            // Meta Pixel — carrega o script real e reprocessa a fila
+            (function(f,b,e,v,n,t,s){
+                n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+                if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+                n.queue=(window._fbq_queue||[]);
+                t=b.createElement(e);t.async=!0;t.src=v;
+                s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s);
+            })(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+
+            // Wistia player
+            var wp = document.createElement('script');
+            wp.src = 'https://fast.wistia.com/player.js';
+            wp.async = true;
+            document.body.appendChild(wp);
+
+            var we = document.createElement('script');
+            we.src = 'https://fast.wistia.com/embed/u17jv5n507.js';
+            we.async = true;
+            we.type = 'module';
+            document.body.appendChild(we);
         });
     </script>
 </body>
